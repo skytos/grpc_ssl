@@ -16,7 +16,7 @@
  *
  */
 var fs = require('fs');
-var PROTO_PATH = __dirname + '/../../protos/helloworld.proto';
+var PROTO_PATH = __dirname + '/helloworld.proto';
 
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
@@ -31,7 +31,10 @@ var packageDefinition = protoLoader.loadSync(
 var hello_proto = grpc.loadPackageDefinition(packageDefinition).helloworld;
 
 function main() {
-  var creds = grpc.credentials.createSsl( fs.readFileSync('certificate.pem') );
+  var signed_server_crt = fs.readFileSync("signed_server.crt");
+  var server_crt = fs.readFileSync("server.crt");
+  var server_key = fs.readFileSync("server.key");
+  var creds = grpc.credentials.createSsl(signed_server_crt);
   var client = new hello_proto.Greeter('localhost:50051', creds);
   var user;
   if (process.argv.length >= 3) {
@@ -40,7 +43,6 @@ function main() {
     user = 'world';
   }
   client.sayHello({name: user}, function(err, response) {
-    console.log('err', err);
     console.log('Greeting:', response.message);
   });
 }
