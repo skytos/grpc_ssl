@@ -34,7 +34,7 @@ function main() {
   var signed_server_crt = fs.readFileSync("signed_server.crt");
   var server_crt = fs.readFileSync("server.crt");
   var server_key = fs.readFileSync("server.key");
-  var creds = grpc.credentials.createSsl(signed_server_crt);
+  var creds = grpc.credentials.createSsl(server_crt);
   var client = new hello_proto.Greeter('localhost:50051', creds);
   var user;
   if (process.argv.length >= 3) {

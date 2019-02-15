@@ -43,16 +43,15 @@ function sayHello(call, callback) {
  * sample server port
  */
 function main() {
-  var signed_server_crt = fs.readFileSync("server.crt");
-  var server_crt = fs.readFileSync("signed_server.crt");
+  var signed_server_crt = fs.readFileSync("signed_server.crt");
+  var server_crt = fs.readFileSync("server.crt");
   var server_key = fs.readFileSync("server.key");
   var server = new grpc.Server();
   server.addService(hello_proto.Greeter.service, {sayHello: sayHello});
   var creds=grpc.ServerCredentials.createSsl(
-    signed_server_crt,
+    server_crt,
     [{cert_chain: server_crt, private_key: server_key}],
     false);
-    console.log('qqq',creds);
   server.bind('0.0.0.0:50051', creds);
   server.start();
 }
